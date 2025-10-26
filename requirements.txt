@@ -1,0 +1,12 @@
+requests
+aiogram
+langchain
+openai
+pydantic
+pydantic-settings
+pytest
+chardet==5.2.0
+pypdf
+python-docx
+markdown
+striprtf
