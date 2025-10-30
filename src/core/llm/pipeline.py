@@ -4,29 +4,31 @@ class Pipeline:
     def __init__(self, client: GPTClient):
         self.client = client
 
-    def ask(self, 
+    async def ask(self, 
         context: str, 
         question: str,
+        history: list[dict] = [],
         max_tokens: int = 2000,
     ) -> str:
         messages = [
             {
-                "role": "system",
-                "text": f"""
-                Ты - умный ассистент, анализирующий документы. 
-                Необходимо ответить на вопрос пользователя, 
-                используя предоставленный документ.
-                """,
+                "role": "system", 
+                "text": (
+                "Ты — интеллектуальный ассистент, который отвечает на вопросы по документу. "
+                "Используй контекст документа и историю диалога для более точных ответов."
+                )
             },
             {
-                "role": "assistant",
-                "text": f"Документ: \n{context[:4000]}",
+                "role": "assistant", 
+                "text": f"Документ:\n{context}"
             },
+            *history,
             {
-                "role": "user",
-                "text": f"Вопрос: {question}",
+                "role": "user", 
+                "text": question
             }
         ]
-        return self.client.complete(messages, 
+        
+        return await self.client.complete(messages,
             max_tokens=max_tokens
         )

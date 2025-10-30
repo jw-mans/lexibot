@@ -11,8 +11,8 @@ class Settings(BaseSettings):
     YANDEX_API_URL: str
     YANDEX_CLOUD_CATALOG_ID: str
 
-    UPLOAD_DIR: str = str(BASE_DIR / "lexibot" / "storage" / "uploads")
-    VECTOR_DB_DIR: str = str(BASE_DIR / "lexibot"/ "storage" / "db")
+    UPLOAD_DIR: str = str(BASE_DIR / "storage" / "uploads")
+    VECTOR_DB_DIR: str = str(BASE_DIR / "storage" / "db")
 
     class Config:
         env_file = BASE_DIR / "src" / "config" / ".env"

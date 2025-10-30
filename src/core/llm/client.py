@@ -1,3 +1,4 @@
+import httpx
 import requests
 from ...config import settings
 
@@ -11,7 +12,7 @@ class GPTClient:
         self.api_model_uri = api_model_uri
         self.api_url = api_url
     
-    def complete(self, 
+    async def complete(self, 
         messages: list[dict], 
         temperature: float = 0.6, 
         max_tokens: int = 2000, 
@@ -32,9 +33,16 @@ class GPTClient:
             "Authorization": f"Api-Key {self.api_key}"
         }
 
-        response = requests.post(self.api_url, 
-            headers=headers, 
-            json=payload,
-        )
-        return response.json()
         
+        async with httpx.AsyncClient(timeout=60) as client:
+            response = await client.post(
+                self.api_url,
+                headers=headers,
+                json=payload
+            )
+
+        try:
+            data = response.json()['result']['alternatives'][0]['message']['text']
+            return data.strip()
+        except (KeyError, IndexError, TypeError) as e:
+            raise ValueError(f"Не удалось извлечь текст из ответа: {data}")
