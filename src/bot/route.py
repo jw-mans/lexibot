@@ -10,21 +10,16 @@ from pathlib import Path
 
 from ..config import settings
 from ..core.loader import makeReader
-from ..core.llm.client import GPTClient
-from ..core.llm.pipeline import Pipeline
-from ..core.store import UserStore, HistoryStore
+from ..core.core import Core
 
 bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
 dp = Dispatcher()
 
-client = GPTClient()
-pipeline = Pipeline(client)
-user_store = UserStore(settings.UPLOAD_DIR)
-history_store = HistoryStore()
+core = Core()
 
 @dp.message(Command("start"))
 async def start_cmd(message: types.Message):
-    history_store.clear(message.from_user.id)
+    core.history_store.clear(message.from_user.id)
     await message.answer(
         "Привет! 👋\n\nОтправь мне документ (PDF, DOCX, RTF, MD или TXT), а потом задай вопрос по нему.\n"
         "Я запомню документ и буду отвечать на цепочку вопросов без повторной загрузки."
@@ -47,18 +42,18 @@ async def handle_file(message: types.Message):
         await message.answer(f"Не удалось прочитать файл: {e}")
         return
     
-    user_store.save_file(
+    core.user_store.save_file(
         user_id=message.from_user.id,
         file_name=document.file_name,
         content=content
     )
-    history_store.clear(message.from_user.id)
+    core.history_store.clear(message.from_user.id)
     await message.answer("Файл получен и обработан ✅ Теперь задай вопрос по нему.")
 
 @dp.message(F.text)
 async def handle_question(message: types.Message):
     user_id = message.from_user.id
-    context = user_store.get_content(user_id)
+    context = core.user_store.get_content(user_id)
     
     if not context:
         await message.answer("Сначала отправь мне документ для анализа 📄")
@@ -68,18 +63,18 @@ async def handle_question(message: types.Message):
     await message.answer("Обрабатываю твой вопрос... ⏳")
 
     try: 
-        history = history_store.get_history(user_id)
-        answer = await pipeline.ask(
+        history = core.history_store.get_history(user_id)
+        answer = await core.pipeline.ask(
             context=context,
             question=question,
             history=history,
         )
 
-        history_store.add_message(user_id,
+        core.history_store.add_message(user_id,
             role='user',
             text=question,
         )
-        history_store.add_message(user_id,
+        core.history_store.add_message(user_id,
             role='assistant',
             text=answer,
         )

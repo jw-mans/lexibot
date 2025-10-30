@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  lexibot:
+    build: .
+    container_name: lexibot
+    restart: unless-stopped
+    environment:
+      - .env
+    volumes:
+      - ./storage:/app/src/storage
+    network_mode: 'host'

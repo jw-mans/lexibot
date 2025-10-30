@@ -94,3 +94,5 @@ test-results.xml
 *.pid
 docker-compose.override.yml
 .env.docker
+
+**/storage/
