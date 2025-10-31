@@ -79,7 +79,7 @@ async def handle_question(message: types.Message):
             text=answer,
         )
 
-        await message.answer(f"💬 Ответ:\n\n{answer}", parse_mode=True)
+        await message.answer(f"💬 Ответ:\n\n{answer}")
     except Exception as e:
         await message.answer(f"Произошла ошибка при обработке вопроса: {e}")
 
