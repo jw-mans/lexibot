@@ -11,3 +11,4 @@ python-docx
 markdown
 striprtf
 httpx
+scikit-learn

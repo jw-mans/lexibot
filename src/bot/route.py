@@ -42,7 +42,7 @@ async def handle_file(message: types.Message):
         await message.answer(f"Не удалось прочитать файл: {e}")
         return
     
-    core.user_store.save_file(
+    core.save_file(
         user_id=message.from_user.id,
         file_name=document.file_name,
         content=content
@@ -64,8 +64,8 @@ async def handle_question(message: types.Message):
 
     try: 
         history = core.history_store.get_history(user_id)
-        answer = await core.pipeline.ask(
-            context=context,
+        answer = await core.ask(
+            user_id=user_id,
             question=question,
             history=history,
         )
