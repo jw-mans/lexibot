@@ -28,7 +28,7 @@ The bot combines:
 
 3) **Bot replies** with a generated answer and remembers the conversation for context.
 
-## ⚙️ Installation and Setup
+## Installation and Setup
 ### 1) Clone the repository
 ```bash
 git clone https://github.com/yourusername/lexibot.git
@@ -83,8 +83,8 @@ Once the bot is running:
 
 The bot will answer using the uploaded document’s content and remember the chat history for follow-up questions.
 
-## 🧩 Core Components
-### 🧾 Document Loader
+## Core Components
+### Document Loader
 
 Located in `src/core/loader/`, it automatically detects file type and extracts text:
 
@@ -144,7 +144,7 @@ Planned improvements and future development goals:
 - Create a **generation pipeline via LangChain** for modular, extensible response generation
 
 
- ## 👨‍💻 Author
+ ## Author
 
 **LexiBot** was developed to make document understanding conversational.
 Built by **[jw-mans (Daniel Jermakiw)](https://github.com/jw-mans/)**  using Python, Aiogram, and YandexGPT.
