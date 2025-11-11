@@ -1,9 +1,9 @@
-# 📚 LexiBot — Document Question Answering Telegram Bot
+# LexiBot — Document Question Answering Telegram Bot
 
 **LexiBot** is a Telegram bot that helps you interact with your documents using **YandexGPT**.  
 You can upload a document (PDF, DOCX, RTF, MD, or TXT), ask questions about its content, and the bot will answer intelligently — keeping conversation context between your questions.
 
-## 🚀 Features
+## Features
 
 -  Uses **YandexGPT** for natural language understanding and answering questions
 -  Supports multiple document formats:
@@ -15,7 +15,7 @@ You can upload a document (PDF, DOCX, RTF, MD, or TXT), ask questions about its 
 -  Fully containerized via Docker / Docker Compose
 -  Built with **Aiogram** (async Telegram bot framework)
 
-## 🧠 How It Works
+## How It Works
 1) **User sends a document** to the bot.  
     The file is downloaded, parsed, and its text content is stored.
 
@@ -65,7 +65,7 @@ This will:
 - Mount `./storage` to persist user uploads
 - Start the bot container
 
-## 💡 Usage
+## Usage
 
 Once the bot is running:
 
@@ -96,7 +96,7 @@ Located in `src/core/loader/`, it automatically detects file type and extracts t
 
 - MDReader — decodes Markdown and text files
 
-### 🧠 YandexGPT Integration
+### YandexGPT Integration
 
 Implemented in `src/core/llm/`:
 
@@ -104,13 +104,13 @@ Implemented in `src/core/llm/`:
 
 - `pipeline.py` — constructs messages and sends queries with document context and conversation history
 
-### 🗂️ User and History Stores
+### User and History Stores
 
 `UserStore` — keeps uploaded document contents per user
 
 `HistoryStore` — saves the chat message history for multi-turn dialogue
 
-## 📦 Dependencies
+## Dependencies
 
 **Main libraries:**
 - `aiogram`
@@ -130,18 +130,18 @@ Implemented in `src/core/llm/`:
 - `pydantic-settings`
  — environment-based configuration
 
-## 🧭 Roadmap
+## Roadmap
 
 Planned improvements and future development goals:
 
-- 🧩 Implement document **chunking and embedding** for handling large files efficiently  
-- 🧱 Redesign document structure and **improve internal markup parsing**  
-- 🗄️ Develop **new storage mechanisms** for user documents  
-- 👥 Build a robust **user session management system**  
-- 📁 Enable **multi-file document handling** and cross-file queries  
-- 🧮 Add **LaTeX parsing support** for scientific and mathematical documents  
-- 🤖 Integrate **additional language models** (beyond YandexGPT)  
-- 🔗 Create a **generation pipeline via LangChain** for modular, extensible response generation
+- Implement document **chunking and embedding** for handling large files efficiently  
+- Redesign document structure and **improve internal markup parsing**  
+- Develop **new storage mechanisms** for user documents  
+- Build a robust **user session management system**  
+- Enable **multi-file document handling** and cross-file queries  
+- Add **LaTeX parsing support** for scientific and mathematical documents  
+- Integrate **additional language models** (beyond YandexGPT)  
+- Create a **generation pipeline via LangChain** for modular, extensible response generation
 
 
  ## 👨‍💻 Author
