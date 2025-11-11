@@ -5,15 +5,15 @@ You can upload a document (PDF, DOCX, RTF, MD, or TXT), ask questions about its 
 
 ## 🚀 Features
 
-- 🤖 Uses **YandexGPT** for natural language understanding and answering questions
-- 📂 Supports multiple document formats:
+-  Uses **YandexGPT** for natural language understanding and answering questions
+-  Supports multiple document formats:
     - PDF (.pdf)
     - Word (.doc, .docx)
     - Rich Text (.rtf)
     - Markdown / Text (.md, .txt)
-- 💬 Remembers chat history per user for contextual conversation
-- 🐳 Fully containerized via Docker / Docker Compose
-- ⚡ Built with **Aiogram** (async Telegram bot framework)
+-  Remembers chat history per user for contextual conversation
+-  Fully containerized via Docker / Docker Compose
+-  Built with **Aiogram** (async Telegram bot framework)
 
 ## 🧠 How It Works
 1) **User sends a document** to the bot.  
