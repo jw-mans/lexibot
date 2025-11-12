@@ -2,6 +2,7 @@ requests
 aiogram
 langchain
 openai
+fastapi
 pydantic
 pydantic-settings
 pytest
@@ -12,3 +13,7 @@ markdown
 striprtf
 httpx
 scikit-learn
+faiss-gpu # check the environment for compatibility
+mlfow
+uvicorn # or uvicorn[standard]????
+sentence-transformers

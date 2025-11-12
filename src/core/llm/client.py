@@ -1,48 +1,31 @@
-import httpx
-import requests
-from ...config import settings
+import openai
+from ...config import config
 
-class GPTClient:
+
+
+class GPTClient(openai.OpenAI):
     def __init__(self,
-            api_key: str = settings.YANDEX_API_KEY,
-            api_model_uri: str = settings.YANDEX_API_MODEL_URI,
-            api_url: str = settings.YANDEX_API_URL
+            api_key: str = config.yandex_api_key,
+            base_url: str = config.yandex_api_url,
+            project: str = config.yandex_cloud_catalog_id,
         ):
-        self.api_key = api_key
-        self.api_model_uri = api_model_uri
-        self.api_url = api_url
-    
-    async def complete(self, 
-        messages: list[dict], 
-        temperature: float = 0.6, 
-        max_tokens: int = 2000, 
-        stream: bool = False
+        super().__init__(
+            api_key=api_key,
+            base_url=base_url,
+            project=project
+        )
+
+    async def complete(self,
+        messages: list[dict],
+        model: str = config.yandex_gpt_model,
+        max_tokens: int = 2000,
+        temperature: float = 0.6,
+        stream: bool = False,
     ) -> str:
-        payload = {
-            "modelUri": self.api_model_uri,
-            "completionOptions": {
-                "stream": stream,
-                "temperature": temperature,
-                "maxTokens": str(max_tokens)
-            },
-            "messages": messages
-        }
-
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Api-Key {self.api_key}"
-        }
-
-        
-        async with httpx.AsyncClient(timeout=60) as client:
-            response = await client.post(
-                self.api_url,
-                headers=headers,
-                json=payload
-            )
-
-        try:
-            data = response.json()['result']['alternatives'][0]['message']['text']
-            return data.strip()
-        except (KeyError, IndexError, TypeError) as e:
-            raise ValueError(f"Не удалось извлечь текст из ответа: {data}")
+        return self.chat.completions.create(
+            model=model,
+            messages=messages,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            stream=stream
+        ).choices[0].message.content

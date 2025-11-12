@@ -17,4 +17,16 @@ class Settings(BaseSettings):
     class Config:
         env_file = BASE_DIR / "src" / "config" / ".env"
 
-settings = Settings()
+class Config:
+    def __init__(self):
+        settings = Settings()
+
+        self.yandex_api_key = settings.YANDEX_API_KEY
+        self.yandex_api_key_id = settings.YANDEX_API_KEY_ID
+        self.yandex_api_model_uri = settings.YANDEX_API_MODEL_URI
+        self.yandex_cloud_catalog_id = settings.YANDEX_CLOUD_CATALOG_ID
+        
+        self.yandex_api_url = 'https://llm.api.cloud.yandex.net/v1'
+        self.yandex_gpt_model = f'gpt://{self.yandex_cloud_catalog_id}/yandexgpt/rc'
+
+config = Config()
