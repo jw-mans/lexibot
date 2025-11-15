@@ -13,7 +13,6 @@ markdown
 striprtf
 httpx
 scikit-learn
-faiss-gpu # check the environment for compatibility
-mlfow
-uvicorn # or uvicorn[standard]????
+uvicorn[standard]
 sentence-transformers
+gradio

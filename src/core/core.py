@@ -16,13 +16,22 @@ class Core:
     @staticmethod
     def make_messages(context: str, history: List[dict], question: str) -> List[dict]:
         return [
-            {"role": "system", "content": (
-                "Ты — интеллектуальный ассистент, который отвечает на вопросы по документу. "
-                "Используй контекст документа и историю диалога для более точных ответов."
-            )},
-            {"role": "assistant", "content": f"Документ:\n{context}"},
+            {
+                "role": "system", 
+                "content": (
+                    "Ты — интеллектуальный ассистент, который отвечает на вопросы по документу. "
+                    "Используй контекст документа и историю диалога для более точных ответов."
+                )
+            },
+            {
+                "role": "assistant", 
+                "content": f"Документ:\n{context}"
+            },
             *history,
-            {"role": "user", "content": question}
+            {
+                "role": "user", 
+                "content": question
+            }
         ]
 
     def __init__(self,

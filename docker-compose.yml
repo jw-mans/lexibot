@@ -1,11 +1,14 @@
-version: "3.9" 
+version: "3.9"  # синтаксис Compose, современный и совместимый с Docker 20+
 
 services:
   lexibot:
     build: .
     container_name: lexibot
-    restart: unless-stopped
-    env_file:
-      - ./src/config/.env
     volumes:
-      - ./storage:/app/src/storage
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+    ports:
+      - "8000:8000"
+      - "7860:7860"
+    restart: unless-stopped

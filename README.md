@@ -51,7 +51,7 @@ Install dependencies and run the bot:
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python -m src.bot.route
+python -m src.server.main
 ```
 ### 4) *Option B*: Run with Docker
 Build and start using Docker Compose:

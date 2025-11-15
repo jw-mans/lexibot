@@ -18,6 +18,24 @@ class Settings(BaseSettings):
 
 
 class Config:
+
+    # TODO: convert to static all occurrences
+
+    __env_settings = Settings()
+
+    telegram_bot_token = __env_settings.TELEGRAM_BOT_TOKEN
+
+    upload_dir = __env_settings.UPLOAD_DIR
+    vector_db_dir = __env_settings.VECTOR_DB_DIR
+    
+    yandex_api_key = __env_settings.YANDEX_API_KEY
+    yandex_api_key_id = __env_settings.YANDEX_API_KEY_ID
+    yandex_api_model_uri = __env_settings.YANDEX_API_MODEL_URI
+    yandex_cloud_catalog_id = __env_settings.YANDEX_CLOUD_CATALOG_ID
+
+    yandex_api_url = 'https://llm.api.cloud.yandex.net/v1'
+    yandex_gpt_model = f'gpt://{yandex_cloud_catalog_id}/yandexgpt/rc'
+
     def __init__(self):
         settings = Settings()
 
