@@ -8,14 +8,16 @@ import asyncio
 import os
 from pathlib import Path
 
-from ..config import settings
+from ..config import config
 from ..core.loader import makeReader
 from ..core.core import Core
 
-bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
+bot = Bot(token=config.telegram_bot_token)
 dp = Dispatcher()
 
 core = Core()
+
+# TODO: Build Store
 
 @dp.message(Command("start"))
 async def start_cmd(message: types.Message):
@@ -28,7 +30,7 @@ async def start_cmd(message: types.Message):
 @dp.message(F.document)
 async def handle_file(message: types.Message):
     document = message.document
-    file_path = Path(settings.UPLOAD_DIR) / document.file_name
+    file_path = Path(config.upload_dir) / document.file_name
     os.makedirs(file_path.parent, exist_ok=True)
 
     file = await bot.download(document)
@@ -42,7 +44,7 @@ async def handle_file(message: types.Message):
         await message.answer(f"Не удалось прочитать файл: {e}")
         return
     
-    core.save_file(
+    Core.save_file(
         user_id=message.from_user.id,
         file_name=document.file_name,
         content=content
@@ -63,20 +65,9 @@ async def handle_question(message: types.Message):
     await message.answer("Обрабатываю твой вопрос... ⏳")
 
     try: 
-        history = core.history_store.get_history(user_id)
         answer = await core.ask(
             user_id=user_id,
             question=question,
-            history=history,
-        )
-
-        core.history_store.add_message(user_id,
-            role='user',
-            text=question,
-        )
-        core.history_store.add_message(user_id,
-            role='assistant',
-            text=answer,
         )
 
         await message.answer(f"💬 Ответ:\n\n{answer}")

@@ -1,93 +1,52 @@
-from ..config import settings
+from typing import List
+from ..config import config
 from .llm.client import GPTClient
-from .llm.pipeline import Pipeline
-from .store import UserStore, HistoryStore
-from .retriever import Retriever, chunking
+from .history.history import HistoryStore
+from .retriever.types.simple import SimpleRetriever
+from .user_store.user_store import UserStore
 
 class Core:
 
-    chunk_size_words = 500
-    top_k = 3
-    max_context_words = 1500
+    user_store = UserStore(config.upload_dir)
 
     @staticmethod
-    def get_chunk_size_words() -> int:
-        return Core.chunk_size_words
-    
+    def save_file(user_id: int, file_name: str, content: str) -> str:
+        return Core.user_store.save_file(user_id, file_name, content)
+
     @staticmethod
-    def get_top_k() -> int:
-        return Core.top_k
-    
-    @staticmethod
-    def get_max_context_words() -> int:  
-        return Core.max_context_words
-    
-    def __init__(self):
-        self.client = GPTClient()
-        self.pipeline = Pipeline(self.client)
-        self.user_store = UserStore(settings.UPLOAD_DIR)
-        self.history_store = HistoryStore()
-        self.retriever = Retriever()
+    def make_messages(context: str, history: List[dict], question: str) -> List[dict]:
+        return [
+            {"role": "system", "content": (
+                "Ты — интеллектуальный ассистент, который отвечает на вопросы по документу. "
+                "Используй контекст документа и историю диалога для более точных ответов."
+            )},
+            {"role": "assistant", "content": f"Документ:\n{context}"},
+            *history,
+            {"role": "user", "content": question}
+        ]
 
-    def save_file(self,
-        user_id: int,
-        file_name: str,
-        content: str
-    ) -> str:
-        path = self.user_store.save_file(user_id, file_name, content)
-        chunks = chunking(content,
-            chunk_size=Core.get_chunk_size_words()
-        )
-        self.retriever.add_document(user_id, chunks)
-        return path
+    def __init__(self,
+                 client: GPTClient = GPTClient(),
+                 history_store: HistoryStore = HistoryStore(),
+                 retriever: SimpleRetriever = SimpleRetriever()):
+        self.client = client
+        self.retriever = retriever
+        self.history_store = history_store
 
-    async def ask(self,
-        user_id: int, 
-        question: str,
-        history: list[dict] = [],    
-    ):
-        chunks = self.retriever.get_relevant_chunks(
-            user_id=user_id,
-            query=question,
-            top_k=Core.get_top_k()
-        )
-        if not chunks: context = self.user_store.get_content(user_id)
-        else:
-            context_words = []
-            total = 0
-            for chunk in chunks:
-                words = chunk.split()
-                if total + len(words) > Core.get_max_context_words():
-                    break
-                context_words.extend(words)
-                total += len(words)
-            context = ' '.join(context_words)
-
-        return await self.pipeline.ask(
-            context=context,
-            question=question,
-            history=history
-        )
-    
-    def get_user_content(self, 
-        user_id: int
-    ) -> str:
-        return self.user_store.get_content(user_id)
-    
-    def add_history(self,
-        user_id: int,
-        role: str,
-        text: str,
-    ):
-        self.history_store.add_message(
-            user_id=user_id,
-            role=role,
-            text=text
-        )
-    
-    def get_history(self,
-        user_id: int,
-    ) -> list[dict]:
-        return self.history_store.get_history(user_id)
-    
-    
+    async def ask(self, user_id: int, question: str, max_tokens: int = 2000) -> str:
+        # 1. История
+        history = self.history_store.get_history(user_id)
+        # 2. Контент пользователя
+        document = self.user_store.get_content(user_id)
+        if not document:
+            return "Документы пользователя не найдены."
+        # 3. Релевантные чанки
+        context = self.retriever.retrieve(document, question)
+        # 4. Сообщения для LLM
+        messages = Core.make_messages(context, history, question)
+        # 5. Ответ от LLM
+        answer = await self.client.complete(messages, max_tokens=max_tokens)
+        # 6. Сохраняем историю
+        self.history_store.add_message(user_id, role='user', text=question)
+        self.history_store.add_message(user_id, role='assistant', text=answer)
+        return answer

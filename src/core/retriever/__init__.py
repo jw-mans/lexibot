@@ -1,6 +1,8 @@
-from .retriever import Retriever, chunking
+from .types import (
+    EmptyRetriever, SimpleRetriever
+)
 
 __all__ = [
-    "Retriever",
-    "chunking",
+    'EmptyRetriever',
+    'SimpleRetriever',
 ]
